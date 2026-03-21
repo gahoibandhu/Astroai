@@ -89,7 +89,7 @@ function RemedyCard({ remedy, isPriority }) {
             <LevelBadge level={remedy.level} />
           </div>
         </div>
-        {!open && <div style={{ color: 'rgba(201,168,76,0.5)', fontSize: '0.85rem', flexShrink: 0, maxWidth: '40%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontStyle: 'italic', fontSize: '0.78rem', color: 'rgba(232,220,200,0.4)' }}>{remedy.primary}</div>}
+        {!open && <div style={{ fontSize: '0.78rem', flexShrink: 0, maxWidth: '40%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontStyle: 'italic', color: 'rgba(232,220,200,0.4)' }}>{remedy.primary}</div>}
         <span style={{ color: 'rgba(201,168,76,0.5)', fontSize: '0.9rem', flexShrink: 0, marginLeft: 4 }}>{open ? '▲' : '▼'}</span>
       </div>
 
@@ -227,7 +227,7 @@ export default function RemediesPage() {
             <div style={{ display: 'flex', gap: 8, marginBottom: 18, background: '#110228', padding: 4, borderRadius: 10, border: '1px solid rgba(201,168,76,0.12)' }}>
               {['planet', 'problem'].map(m => (
                 <button key={m} onClick={() => { setMode(m); setResult(null); setError('') }}
-                  style={{ flex: 1, padding: '8px', border: 'none', borderRadius: 7, cursor: 'pointer', fontFamily: 'sans-serif', fontSize: '0.78rem', letterSpacing: '0.07em', fontWeight: 600, transition: 'all 0.15s',
+                  style={{ flex: 1, padding: '8px', borderRadius: 7, cursor: 'pointer', fontFamily: 'sans-serif', fontSize: '0.78rem', letterSpacing: '0.07em', fontWeight: 600, transition: 'all 0.15s',
                     background: mode === m ? 'rgba(201,168,76,0.15)' : 'transparent',
                     color: mode === m ? '#c9a84c' : 'rgba(232,220,200,0.4)',
                     border: mode === m ? '1px solid rgba(201,168,76,0.25)' : '1px solid transparent'
