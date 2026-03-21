@@ -240,74 +240,10 @@ export async function getPredictionStats(uid) {
   return { total: preds.length, tested: tested.length, correct, partial, wrong, avgRating, accuracy: tested.length > 0 ? Math.round((correct + partial * 0.5) / tested.length * 100) : null }
 }
 
-// ─────────────────────────────────────────────
-//  PREDICTIONS + FEEDBACK
-// ─────────────────────────────────────────────
-
-export async function savePrediction({ uid, chatId, sessionId, domain, summary, timeframe, fullText }) {
-  const ref = await addDoc(collection(db, 'predictions'), {
-    uid, chatId, sessionId, domain,
-    summary, timeframe, fullText,
-    status: 'pending',   // pending | correct | incorrect | partial
-    rating: null,
-    userOutcome: null,
-    createdAt: serverTimestamp()
-  })
-  return ref.id
-}
-
-export async function getUserPredictions(uid) {
-  const q = query(
-    collection(db, 'predictions'),
-    where('uid', '==', uid),
-    orderBy('createdAt', 'desc'),
-    limit(50)
-  )
-  const snap = await getDocs(q)
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }))
-}
-
-export async function submitPredictionFeedback({ predictionId, rating, userOutcome, status }) {
-  const ref = doc(db, 'predictions', predictionId)
-  await updateDoc(ref, { rating, userOutcome, status, reviewedAt: serverTimestamp() })
-  // Also save to feedback collection
-  const predSnap = await getDoc(ref)
-  if (predSnap.exists()) {
-    await addDoc(collection(db, 'feedback'), {
-      predictionId,
-      uid: predSnap.data().uid,
-      domain: predSnap.data().domain,
-      rating,
-      userOutcome,
-      status,
-      accuracy: rating / 5,
-      createdAt: serverTimestamp()
-    })
-  }
-}
-
-export async function getAccuracyStats(uid) {
-  const q = query(collection(db, 'feedback'), where('uid', '==', uid))
-  const snap = await getDocs(q)
-  const items = snap.docs.map(d => d.data())
-  if (items.length === 0) return null
-  const avg = items.reduce((s, i) => s + (i.accuracy || 0), 0) / items.length
-  const byDomain = {}
-  items.forEach(i => {
-    if (!byDomain[i.domain]) byDomain[i.domain] = []
-    byDomain[i.domain].push(i.accuracy || 0)
-  })
-  const domainStats = Object.entries(byDomain).map(([domain, accs]) => ({
-    domain, count: accs.length, avg: accs.reduce((a, b) => a + b, 0) / accs.length
-  }))
-  return { overall: avg, total: items.length, byDomain: domainStats }
-}
 
 // ─────────────────────────────────────────────
 //  ADMIN (read-only from frontend — write via function)
 // ─────────────────────────────────────────────
 export async function getAllPredictionsAdmin() {
-  // Admin fetches via secure function, not direct Firestore
-  // This is a placeholder — real admin panel calls /.netlify/functions/admin-stats
   return []
 }
