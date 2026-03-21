@@ -247,3 +247,8 @@ export async function getPredictionStats(uid) {
 export async function getAllPredictionsAdmin() {
   return []
 }
+
+// Alias for backward compatibility
+export async function getAccuracyStats(uid) {
+  return getPredictionStats(uid)
+}
